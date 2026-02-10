@@ -1,0 +1,8 @@
+# Application name
+spring.application.name=art-gallery
+
+# Server
+server.port=8080
+
+# Disable unnecessary logs
+logging.level.org.springframework=INFO
