@@ -1,9 +1,9 @@
 package com.example.artgallery.service.impl;
 
-import com.example.artgallery.model.*;
+import com.example.artgallery.model.Artwork;
+import com.example.artgallery.patterns.cache.ArtworkCache;
 import com.example.artgallery.repository.ArtworkRepository;
 import com.example.artgallery.service.ArtworkService;
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,35 +11,55 @@ import java.util.List;
 @Service
 public class ArtworkServiceImpl implements ArtworkService {
 
-    private final ArtworkRepository repository;
+    private static final String CACHE_KEY = "all_artworks";
 
-    public ArtworkServiceImpl(ArtworkRepository repository) {
-        this.repository = repository;
-    }
-
-    @PostConstruct
-    public void init() {
-        repository.save(new Painting(1, "Starry Night", 1_000_000,
-                new Artist(1, "Vincent van Gogh")));
-
-        repository.save(new Painting(2, "Mona Lisa", 850_000,
-                new Artist(2, "Leonardo da Vinci")));
-
-        repository.save(new Sculpture(3, "The Thinker", 300_000,
-                new Artist(3, "Auguste Rodin")));
-
-        repository.save(new Sculpture(4, "Venus de Milo", 400_000,
-                new Artist(4, "Alexandros of Antioch")));
-
-        repository.save(new Painting(5, "The Scream", 900_000,
-                new Artist(5, "Edvard Munch")));
-
-        repository.save(new Sculpture(6, "David", 500_000,
-                new Artist(6, "Michelangelo")));
-    }
+    private final ArtworkRepository repository = new ArtworkRepository();
+    private final ArtworkCache cache = ArtworkCache.getInstance();
 
     @Override
     public List<Artwork> getAllArtworks() {
-        return repository.findAll();
+
+        List<Artwork> cached = cache.get(CACHE_KEY);
+
+        if (cached != null) {
+            System.out.println(" Returned from CACHE");
+            return cached;
+        }
+
+        System.out.println("Fetching from DATABASE");
+        List<Artwork> artworks = repository.findAll();
+        cache.put(CACHE_KEY, artworks);
+
+        return artworks;
+    }
+
+    @Override
+    public Artwork createArtwork(String title, double price, String type) {
+
+        Artwork artwork = repository.save(title, price, type);
+
+        cache.invalidate(CACHE_KEY);
+
+        return artwork;
+    }
+
+    @Override
+    public void deleteArtwork(Long id) {
+
+        repository.delete(id);
+
+        cache.invalidate(CACHE_KEY);
+    }
+
+    @Override
+    public void clearCache() {
+        cache.clear();
+    }
+
+    @Override
+    public String getCacheStats() {
+        return "Cache Hits: " + cache.getHitCount() +
+                ", Cache Misses: " + cache.getMissCount();
     }
 }
+
