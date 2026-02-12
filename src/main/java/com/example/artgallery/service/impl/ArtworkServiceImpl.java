@@ -17,7 +17,6 @@ public class ArtworkServiceImpl implements ArtworkService {
         this.repository = repository;
     }
 
-    // 🔥 ВАЖНО: данные загружаются при старте
     @PostConstruct
     public void init() {
         repository.save(new Painting(1, "Starry Night", 1_000_000,
