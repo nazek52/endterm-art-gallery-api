@@ -22,7 +22,7 @@ public class ArtworkServiceImpl implements ArtworkService {
         List<Artwork> cached = cache.get(CACHE_KEY);
 
         if (cached != null) {
-            System.out.println(" Returned from CACHE");
+            System.out.println("Returned from CACHE");
             return cached;
         }
 
@@ -61,5 +61,7 @@ public class ArtworkServiceImpl implements ArtworkService {
         return "Cache Hits: " + cache.getHitCount() +
                 ", Cache Misses: " + cache.getMissCount();
     }
+}
+
 }
 
