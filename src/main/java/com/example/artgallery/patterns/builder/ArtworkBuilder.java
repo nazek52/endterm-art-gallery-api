@@ -1,53 +1,37 @@
 package com.example.artgallery.patterns.builder;
 
-import com.example.artgallery.model.Artist;
 import com.example.artgallery.model.Artwork;
 import com.example.artgallery.patterns.factory.ArtworkFactory;
 
 public class ArtworkBuilder {
 
-    private String type;
-    private int id;
+    private Long id;
     private String title;
     private double price;
-    private Artist artist;
+    private String type;
 
-    public ArtworkBuilder setType(String type) {
-        this.type = type;
-        return this;
-    }
-
-    public ArtworkBuilder setId(int id) {
+    public ArtworkBuilder id(Long id) {
         this.id = id;
         return this;
     }
 
-    public ArtworkBuilder setTitle(String title) {
+    public ArtworkBuilder title(String title) {
         this.title = title;
         return this;
     }
 
-    public ArtworkBuilder setPrice(double price) {
+    public ArtworkBuilder price(double price) {
         this.price = price;
         return this;
     }
 
-    public ArtworkBuilder setArtist(Artist artist) {
-        this.artist = artist;
+    public ArtworkBuilder type(String type) {
+        this.type = type;
         return this;
     }
 
     public Artwork build() {
-        if (type == null || title == null || artist == null) {
-            throw new IllegalStateException("Artwork fields are not fully initialized");
-        }
-
-        return ArtworkFactory.createArtwork(
-                type,
-                id,
-                title,
-                price,
-                artist
-        );
+        return ArtworkFactory.create(id, title, price, type);
     }
 }
+
