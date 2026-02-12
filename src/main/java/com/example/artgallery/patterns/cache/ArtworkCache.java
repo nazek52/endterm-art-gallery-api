@@ -31,6 +31,7 @@ public class ArtworkCache {
 
     private ArtworkCache() {}
 
+    // Double-Checked Locking
     public static ArtworkCache getInstance() {
         if (instance == null) {
             synchronized (ArtworkCache.class) {
@@ -84,3 +85,4 @@ public class ArtworkCache {
         return missCount.get();
     }
 }
+
